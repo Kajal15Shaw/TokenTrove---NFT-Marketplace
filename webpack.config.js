@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
-function initCanisterEnv() {
+/*function initCanisterEnv() {
   let localCanisters, prodCanisters;
   try {
     localCanisters = require(path.resolve(
@@ -43,7 +43,52 @@ function initCanisterEnv() {
   }, {});
 }
 const canisterEnvVariables = initCanisterEnv();
-console.log("📌 Canister Environment Variables:", canisterEnvVariables);
+console.log("📌 Canister Environment Variables:", canisterEnvVariables);*/
+function initCanisterEnv() {
+  let localCanisters = {};
+  let prodCanisters = {};
+  
+  try {
+    const localPath = path.resolve(".dfx", "local", "canister_ids.json");
+    console.log("🔍 Checking for local canister_ids.json at:", localPath);
+    localCanisters = require(localPath);
+    console.log("✅ Loaded local canisters:", localCanisters);
+  } catch (error) {
+    console.warn("⚠️ No local canister_ids.json found.");
+  }
+
+  try {
+    const prodPath = path.resolve("canister_ids.json");
+    console.log("🔍 Checking for production canister_ids.json at:", prodPath);
+    prodCanisters = require(prodPath);
+    console.log("✅ Loaded production canisters:", prodCanisters);
+  } catch (error) {
+    console.warn("⚠️ No production canister_ids.json found.");
+  }
+
+  const network = process.env.DFX_NETWORK || (process.env.NODE_ENV === "production" ? "ic" : "local");
+  console.log("🌐 Using network:", network);
+
+  const canisterConfig = network === "local" ? localCanisters : prodCanisters;
+
+  if (!canisterConfig || Object.keys(canisterConfig).length === 0) {
+    console.error("❌ ERROR: Canister config is empty or undefined!");
+    return {};  // Return an empty object to prevent errors
+  }
+
+  return Object.entries(canisterConfig).reduce((prev, [name, details]) => {
+    if (!details[network]) {
+      console.warn(`⚠️ Warning: Canister ID for ${name} is missing in ${network} environment.`);
+    }
+    prev[`${name.toUpperCase()}_CANISTER_ID`] = details[network] || "MISSING_CANISTER_ID";
+    return prev;
+  }, {});
+}
+
+const canisterEnvVariables = initCanisterEnv();
+
+console.log("📌 Final Canister Environment Variables:", canisterEnvVariables);
+
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
