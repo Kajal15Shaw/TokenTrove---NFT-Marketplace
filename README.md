@@ -65,7 +65,7 @@ http://localhost:8080/
 
 ```
 <input
-        placeholder="Price in DANG"
+        placeholder="Price in TKN"
         type="number"
         className="price-input"
         value={}
@@ -77,7 +77,7 @@ http://localhost:8080/
 
 ```
 <div className="disButtonBase-root disChip-root makeStyles-price-23 disChip-outlined">
-          <span className="disChip-label">23 DANG</span>
+          <span className="disChip-label">23 TKN</span>
         </div>
 ```
 

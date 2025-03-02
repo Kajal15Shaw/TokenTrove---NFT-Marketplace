@@ -43,6 +43,7 @@ function initCanisterEnv() {
   }, {});
 }
 const canisterEnvVariables = initCanisterEnv();
+console.log("📌 Canister Environment Variables:", canisterEnvVariables);
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
