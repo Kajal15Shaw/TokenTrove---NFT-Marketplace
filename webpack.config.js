@@ -27,6 +27,14 @@ function initCanisterEnv() {
 
   const canisterConfig = network === "local" ? localCanisters : prodCanisters;
 
+  console.log("🌐 Using network:", network);
+  console.log("🔍 Canister Config:", canisterConfig);
+
+  if (!canisterConfig) {
+    console.error("❌ ERROR: Canister config is undefined!");
+    process.exit(1);
+  }
+
   return Object.entries(canisterConfig).reduce((prev, current) => {
     const [canisterName, canisterDetails] = current;
     prev[canisterName.toUpperCase() + "_CANISTER_ID"] =
